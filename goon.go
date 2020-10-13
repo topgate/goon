@@ -436,11 +436,9 @@ func (g *Goon) getMulti(dst interface{}, withCache bool) error {
 
 	// set timeout for batch-get with over 100 keys
 	if len(keys) >= 100 {
-		// GAE上でWithTimeoutが正しく動作しない現象を確認した為暫定で無効化
-		// var cf context.CancelFunc
-		// getMultiC, cf = context.WithTimeout(getMultiC, GetMultiTimeout)
-		// defer cf()
-		log.Debugf(g.Context, "GetMulti - no timeout")
+		var cf context.CancelFunc
+		getMultiC, cf = context.WithTimeout(getMultiC, GetMultiTimeout)
+		defer cf()
 	}
 
 	v := reflect.Indirect(reflect.ValueOf(dst))
